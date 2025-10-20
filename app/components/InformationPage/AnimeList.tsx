@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 import { Anime, AnimeCard } from "./AnimeCard";
 import { AnimeDialog } from "./AnimeDialog";
-import { fetchAnimeData } from "@/lib/anime";
+
 export const AnimeList = () => {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
