@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import useSWR from "swr";
 
 import Image from "next/image";
 export const AnimeList = () => {
@@ -20,14 +21,71 @@ export const AnimeList = () => {
     }
   }, [searchParams]);
 
+  // Define fetchAnimeData function
+  const fetchAnimeData = async (page: number) => {
+    const response = await fetch('https://graphql.anilist.co', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: `
+          query GetTopAnime($page: Int, $perPage: Int) {
+            Page(page: $page, perPage: $perPage) {
+              media(type: ANIME, sort: POPULARITY_DESC) {
+                id
+                title {
+                  romaji
+                  english
+                }
+                coverImage {
+                  large
+                }
+                popularity
+                averageScore
+                description
+                genres
+                episodes
+                duration
+                season
+                seasonYear
+                studios(isMain: true) {
+                  nodes {
+                    name
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { page, perPage: 9 },
+      }),
+    });
+    const result = await response.json();
+    return result.data;
+  };
+
+  // Using SWR for caching
+  const { data: swrData, error: swrError } = useSWR(
+    `anime-page-${currentPage}`,
+    () => fetchAnimeData(currentPage),
+    { revalidateOnFocus: false, dedupingInterval: 60000 }
+  );
+
   const { loading, error, data } = useQuery(GET_TOP_ANIME, {
     variables: { page: currentPage, perPage: 9 },
+    skip: !!swrData, // Skip Apollo query if SWR has data
   });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  // Fallback to Apollo data if SWR doesn't have it yet
+  const animeData = swrData || data;
+  const isLoading = loading && !swrData;
+  const hasError = error || swrError;
 
-  const animeList = (data as any)?.Page?.media || [];
+  if (isLoading) return <p>Loading...</p>;
+  if (hasError) return <p>Error: {hasError.message}</p>;
+
+  const animeList = (animeData as any)?.Page?.media || [];
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
