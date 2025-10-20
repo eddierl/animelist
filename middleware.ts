@@ -9,12 +9,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Use environme
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  console.log({pathname})
-
   // Check for session cookie
   const sessionCookie = request.cookies.get('session');
 
-  console.log({sessionCookie})
   // If accessing login page and has valid session, redirect to home
   if (pathname === '/login') {
     if (sessionCookie) {
