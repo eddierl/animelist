@@ -4,15 +4,17 @@ import { GET_TOP_ANIME } from "@/lib/queries";
 import { useQuery } from "@apollo/client/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 import Image from "next/image";
 export const AnimeList = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedAnime, setSelectedAnime] = useState<any>(null);
 
   useEffect(() => {
-    const page = searchParams.get('page');
+    const page = searchParams.get("page");
     if (page) {
       setCurrentPage(parseInt(page, 10));
     }
@@ -30,7 +32,7 @@ export const AnimeList = () => {
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     const params = new URLSearchParams(searchParams.toString());
-    params.set('page', newPage.toString());
+    params.set("page", newPage.toString());
     router.push(`?${params.toString()}`);
   };
 
@@ -43,7 +45,11 @@ export const AnimeList = () => {
       {animeList.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {animeList.map((anime: any) => (
-            <div key={anime.id} className="border rounded-lg p-4 shadow">
+            <div
+              key={anime.id}
+              className="border rounded-lg p-4 shadow cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => setSelectedAnime(anime)}
+            >
               <Image
                 src={anime.coverImage.large}
                 alt={anime.title.romaji || anime.title.english}
@@ -82,6 +88,72 @@ export const AnimeList = () => {
           Next
         </button>
       </div>
+
+      <Dialog.Root
+        open={!!selectedAnime}
+        onOpenChange={() => setSelectedAnime(null)}
+      >
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-900 p-6 rounded-lg shadow-lg border max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            {selectedAnime && (
+              <div className="">
+                <Dialog.Title className="text-2xl font-bold mb-4">
+                  {selectedAnime.title.english || selectedAnime.title.romaji}
+                </Dialog.Title>
+                <div className="flex flex-col md:flex-row gap-4">
+                  <Image
+                    src={selectedAnime.coverImage.large}
+                    alt={
+                      selectedAnime.title.romaji || selectedAnime.title.english
+                    }
+                    width={300}
+                    height={400}
+                    className="w-full md:w-48 h-64 object-cover"
+                  />
+                  <div className="flex-1">
+                    <p className="mb-2">
+                      <strong>Description:</strong>{" "}
+                      {selectedAnime.description?.replace(/<[^>]*>/g, "") ||
+                        "No description available"}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Genres:</strong>{" "}
+                      {selectedAnime.genres?.join(", ") || "N/A"}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Episodes:</strong>{" "}
+                      {selectedAnime.episodes || "N/A"}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Duration:</strong> {selectedAnime.duration}{" "}
+                      minutes per episode
+                    </p>
+                    <p className="mb-2">
+                      <strong>Season:</strong> {selectedAnime.season}{" "}
+                      {selectedAnime.seasonYear}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Studio:</strong>{" "}
+                      {selectedAnime.studios?.nodes?.[0]?.name || "N/A"}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Popularity:</strong> {selectedAnime.popularity}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Average Score:</strong>{" "}
+                      {selectedAnime.averageScore}%
+                    </p>
+                  </div>
+                </div>
+                <Dialog.Close className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Close
+                </Dialog.Close>
+              </div>
+            )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 };

@@ -14,6 +14,17 @@ export const GET_TOP_ANIME = gql`
         }
         popularity
         averageScore
+        description
+        genres
+        episodes
+        duration
+        season
+        seasonYear
+        studios(isMain: true) {
+          nodes {
+            name
+          }
+        }
       }
     }
   }
