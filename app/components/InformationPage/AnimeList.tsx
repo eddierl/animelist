@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client/react";
 import Image from "next/image";
 export const AnimeList = () => {
   const { loading, error, data } = useQuery(GET_TOP_ANIME, {
-    variables: { page: 1, perPage: 10 },
+    variables: { page: 1, perPage: 9 },
   });
 
   if (loading) return <p>Loading...</p>;
