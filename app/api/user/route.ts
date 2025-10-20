@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
       const decoded = jwt.verify(sessionCookie.value, JWT_SECRET) as { username: string; jobTitle: string };
       return NextResponse.json({ username: decoded.username, jobTitle: decoded.jobTitle });
     } catch (error) {
+      console.error("Error", error)
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
   } catch (error) {

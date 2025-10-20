@@ -6,13 +6,13 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 
-import { AnimeCard } from "./AnimeCard";
+import { Anime, AnimeCard } from "./AnimeCard";
 import { AnimeDialog } from "./AnimeDialog";
 import { fetchAnimeData } from "@/lib/anime";
 export const AnimeList = () => {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedAnime, setSelectedAnime] = useState<any>(null);
+  const [selectedAnime, setSelectedAnime] = useState<Anime | null>(null);
 
   useEffect(() => {
     const page = searchParams.get("page");
@@ -41,7 +41,12 @@ export const AnimeList = () => {
   if (isLoading) return <p>Loading...</p>;
   if (hasError) return <p>Error: {hasError.message}</p>;
 
-  const animeList = (animeData as any)?.Page?.media || [];
+  type AnimeList = {
+    Page: {
+      media: Anime[];
+    };
+  };
+  const animeList = (animeData as AnimeList)?.Page?.media || [];
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -58,7 +63,7 @@ export const AnimeList = () => {
       <h1 className="text-2xl font-bold mb-4">Top Anime</h1>
       {animeList.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-          {animeList.map((anime: any) => (
+          {animeList.map((anime: Anime) => (
             <AnimeCard
               key={anime.id}
               anime={anime}

@@ -1,7 +1,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
-interface Anime {
+export interface Anime {
   id: number;
   title: {
     romaji: string;
@@ -45,9 +45,7 @@ export const AnimeCard = ({ anime, onSelect }: AnimeCardProps) => {
       <h2 className="text-lg font-semibold">
         {anime.title.english || anime.title.romaji}
       </h2>
-      <p className="text-sm text-gray-600">
-        Popularity: {anime.popularity}
-      </p>
+      <p className="text-sm text-gray-600">Popularity: {anime.popularity}</p>
       <p className="text-sm text-gray-600">
         Average Score: {anime.averageScore}%
       </p>

@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     const formData = new FormData(e.currentTarget);
-    const username = formData.get('username') as string;
-    const jobTitle = formData.get('jobTitle') as string;
+    const username = formData.get("username") as string;
+    const jobTitle = formData.get("jobTitle") as string;
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
+      const response = await fetch("/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, jobTitle }),
       });
@@ -28,12 +28,13 @@ export default function Login() {
 
       if (response.ok) {
         // Redirect to home page on successful login
-        window.location.href = '/';
+        window.location.href = "/";
       } else {
-        setError(data.error || 'Login failed');
+        setError(data.error || "Login failed");
       }
     } catch (error) {
-      setError('An error occurred. Please try again.');
+      console.error(error);
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -42,10 +43,15 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Login</h1>
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+          Login
+        </h1>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Username
             </label>
             <input
@@ -57,7 +63,10 @@ export default function Login() {
             />
           </div>
           <div>
-            <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label
+              htmlFor="jobTitle"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
               Job Title
             </label>
             <input
@@ -69,16 +78,14 @@ export default function Login() {
             />
           </div>
           {error && (
-            <div className="text-red-600 text-sm text-center">
-              {error}
-            </div>
+            <div className="text-red-600 text-sm text-center">{error}</div>
           )}
           <button
             type="submit"
             disabled={isLoading}
             className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

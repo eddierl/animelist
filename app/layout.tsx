@@ -23,6 +23,7 @@ function getCommitHash() {
   try {
     return execSync("git rev-parse HEAD").toString().trim();
   } catch (error) {
+    console.error(error);
     return "unknown";
   }
 }
