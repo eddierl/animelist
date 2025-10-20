@@ -1,4 +1,6 @@
 import InformationPage from "@/app/components/InformationPage";
+import { Suspense } from "react";
+
 export const metadata = {
   title: "Information Page",
 };
@@ -6,7 +8,9 @@ export const metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      <InformationPage />
+      <Suspense fallback={<div>Loading...</div>}>
+        <InformationPage />
+      </Suspense>
     </div>
   );
 }
