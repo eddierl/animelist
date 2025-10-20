@@ -39,9 +39,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <Header />
-        <div className="flex-1">
-          {children}
-        </div>
+        <div className="flex-1">{children}</div>
         <footer className="p-4 bg-background text-foreground text-center mt-auto">
           Latest commit: {commitHash.slice(0, 8)}
         </footer>
