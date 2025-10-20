@@ -4,7 +4,6 @@ import { GET_TOP_ANIME } from "@/lib/queries";
 import { useQuery } from "@apollo/client/react";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import useSWR from "swr";
 
 import { Anime, AnimeCard } from "./AnimeCard";
 import { AnimeDialog } from "./AnimeDialog";
@@ -21,22 +20,13 @@ export const AnimeList = () => {
     }
   }, [searchParams]);
 
-  // Using SWR for caching
-  const { data: swrData, error: swrError } = useSWR(
-    `anime-page-${currentPage}`,
-    () => fetchAnimeData(currentPage),
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
-  );
-
-  const { loading, error, data } = useQuery(GET_TOP_ANIME, {
+  const {
+    loading: isLoading,
+    error: hasError,
+    data: animeData,
+  } = useQuery(GET_TOP_ANIME, {
     variables: { page: currentPage, perPage: 9 },
-    skip: !!swrData, // Skip Apollo query if SWR has data
   });
-
-  // Fallback to Apollo data if SWR doesn't have it yet
-  const animeData = swrData || data;
-  const isLoading = loading && !swrData;
-  const hasError = error || swrError;
 
   if (isLoading) return <p>Loading...</p>;
   if (hasError) return <p>Error: {hasError.message}</p>;
