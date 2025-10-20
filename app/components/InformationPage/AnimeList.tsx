@@ -8,11 +8,11 @@ import useSWR from "swr";
 
 import { AnimeCard } from "./AnimeCard";
 import { AnimeDialog } from "./AnimeDialog";
+import { fetchAnimeData } from "@/lib/anime";
 export const AnimeList = () => {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAnime, setSelectedAnime] = useState<any>(null);
-  const [selectedAnimeId, setSelectedAnimeId] = useState<string | null>(null);
 
   useEffect(() => {
     const page = searchParams.get("page");
@@ -20,50 +20,6 @@ export const AnimeList = () => {
       setCurrentPage(parseInt(page, 10));
     }
   }, [searchParams]);
-
-  // Define fetchAnimeData function
-  const fetchAnimeData = async (page: number) => {
-    const response = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query: `
-          query GetTopAnime($page: Int, $perPage: Int) {
-            Page(page: $page, perPage: $perPage) {
-              media(type: ANIME, sort: POPULARITY_DESC) {
-                id
-                title {
-                  romaji
-                  english
-                }
-                coverImage {
-                  large
-                }
-                popularity
-                averageScore
-                description
-                genres
-                episodes
-                duration
-                season
-                seasonYear
-                studios(isMain: true) {
-                  nodes {
-                    name
-                  }
-                }
-              }
-            }
-          }
-        `,
-        variables: { page, perPage: 10 },
-      }),
-    });
-    const result = await response.json();
-    return result.data;
-  };
 
   // Using SWR for caching
   const { data: swrData, error: swrError } = useSWR(
@@ -135,7 +91,6 @@ export const AnimeList = () => {
         onOpenChange={(open) => {
           if (!open) {
             setSelectedAnime(null);
-            setSelectedAnimeId(null);
           }
         }}
       />
