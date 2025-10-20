@@ -23,10 +23,10 @@ export const AnimeList = () => {
 
   // Define fetchAnimeData function
   const fetchAnimeData = async (page: number) => {
-    const response = await fetch('https://graphql.anilist.co', {
-      method: 'POST',
+    const response = await fetch("https://graphql.anilist.co", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         query: `
@@ -58,7 +58,7 @@ export const AnimeList = () => {
             }
           }
         `,
-        variables: { page, perPage: 9 },
+        variables: { page, perPage: 10 },
       }),
     });
     const result = await response.json();
@@ -98,10 +98,10 @@ export const AnimeList = () => {
   const goToPreviousPage = () => handlePageChange(Math.max(1, currentPage - 1));
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="flex-1 container mx-auto p-4 overflow-auto">
       <h1 className="text-2xl font-bold mb-4">Top Anime</h1>
       {animeList.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
           {animeList.map((anime: any) => (
             <div
               key={anime.id}
@@ -113,7 +113,7 @@ export const AnimeList = () => {
                 alt={anime.title.romaji || anime.title.english}
                 width={300}
                 height={400}
-                className="w-full h-64 object-cover mb-2"
+                className="w-full h-48 object-cover mb-2"
               />
               <h2 className="text-lg font-semibold">
                 {anime.title.english || anime.title.romaji}
@@ -130,7 +130,7 @@ export const AnimeList = () => {
       ) : (
         <p>No anime data available.</p>
       )}
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-4 pb-4">
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}

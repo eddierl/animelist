@@ -4,5 +4,9 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <InformationPage />;
+  return (
+    <div className="min-h-screen flex flex-col">
+      <InformationPage />
+    </div>
+  );
 }
